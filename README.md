@@ -16,7 +16,7 @@ This guided activity walks you through the process of creating a simple adventur
 - Create static properties for a class.
 - Create a "factory."
 
-S## ubmission
+## Submission
 Submit your completed lab using the Start Assignment button on the assignment page in Canvas.
 Your submission should include:
 - A GitHub link to your completed project repository.
