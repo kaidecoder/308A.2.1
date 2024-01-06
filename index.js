@@ -5,14 +5,14 @@
 const adventurer = {
     name: "Robin",
     health: 10,
-    inventory: ["sword", "potion", "artifact"],
+    inventory: ["sword", "potion", "artifact", "bread", "water"],
     companion: {
         name: "Leo",
         type: "Cat",
         companion: {
             name: "Frank",
             type: "Flea",
-            inventory: ["small hat", "sunglasses"]
+            inventory: ["small hat", "sunglasses", "vial of blood"]
         }
     },
     roll (mod = 0) {
@@ -23,103 +23,131 @@ const adventurer = {
   
   
 //loop to log Robin's inventory
-for (item in adventurer.inventory){
-    console.log(adventurer.inventory[item])
-}
+// for (item in adventurer.inventory){
+//     console.log(adventurer.inventory[item])
+// }
 
 //loop to access Robin's companion's info
-for (item in adventurer.companion){
-    console.log(adventurer.companion[item])
-}
+// for (item in adventurer.companion){
+//     console.log(adventurer.companion[item])
+// }
 
 //test the dice rolls
-console.log(adventurer.roll())
+// console.log(adventurer.roll())
 
 /**
  * ! Part 2: Class Fantasy
 **/
-class Character{
-    constructor(name){
-        this.name = name
-        this.health = 100
-        this.inventory = []
+class Character {
+    static MAX_HEALTH = 100;
+
+    constructor(name, type) {
+        this.name = name;
+        this.type = type
+        this.health = 100;
+        this.inventory = [];
     }
-    roll (mod = 0) {
+
+    roll(mod = 0) {
         const result = Math.floor(Math.random() * 20) + 1 + mod;
-        console.log(`${this.name} rolled a(n) ${result}.`)
-        }
+        console.log(`${this.name} rolled a(n) ${result}.`);
+        return result
+    }
+
+    // Add items to the inventory
+    addInventory(...inventory) {
+        this.inventory.push(...inventory);
+    }
+
+    // Get the current inventory
+    getInventory() {
+        return this.inventory;
+    }
 }
-//create Robin
-const robin = new Character("Robin")
-robin.inventory = ["sword", "potion", "artifact"]
-robin.companion = new Character("Leo")
-robin.companion.type = "Cat"
-robin.companion.companion = new Character("Frank")
-robin.companion.companion.type = "Flea"
-robin.companion.companion.inventory = ["small hat", "sunglasses"]
-console.log()
-console.log(robin.companion.roll())
-console.log(robin.companion.companion.roll())
 
 /**
  * ! Part 3: Class Features
 **/
 class Adventurer extends Character{
-    constructor(name, coins, role, food){
-        super(name)
+    static ROLES = ["Fighter", "Healer", "Wizard"]
+    constructor(name, type, coins, role, food, legs){
+        super(name, type)
+        this.food = this.eat()
+        this.isAgile = true
+        this.strength = 100
+        this.inventory.push("bedroll", "50 gold coins")
         this.role = role
         this.coins = this.getCoins()
-        this.food = this.getFood()
-        this.inventory.push( ["sword", "potion", "artifact"], ["small hat", "sunglasses"], "bedroll")
     }
     scout(){
-        return `${this.name} is scouting ahead...`
-        super.roll()
+        let result = super.roll()
+        return `${this.name} is scouting ahead and rolled a(n) ${result}`
     }
     getCoins(){
         console.log(this.scout())
         return 50 + Math.floor(Math.random() * 20) + 1 
     }
-    getFood(){
-        let randNum = Math.floor(Math.random() *3)
-        return ["chicken", "rabbit", "ox-tails"][randNum]
+    repairSelf(){
+        return this.strength+=5
     }
+    // getRole() {
+    //     const result = Math.floor(Math.random() * this.ROLES.length);
+    //     return this.ROLES[result];
+    // }
     
-}
-console.log()
-//this will show me what is available for use from the parent class.  So there is health of 100 and an empty array, and a name of "Junie"
-const junie = new Adventurer("Junie", 50, "adventurer", )
-console.log(junie)
-
-class Companion extends Character{
-    constructor(name, legs, type){
-        super(name)
-        this.legs = legs
-        this.type = type
-        this.inventory = []
-    }
     move(){
-        if(this.legs < 6){
+        if(this.legs === 6){
             return "runs"
-        }else{
+        }else if(this.legs === 4){
             return "jumps"
+        }else if(this.legs === 2){
+            return "walks"
         }
     }
     eat(){
-        if(this.legs < 6){
-            return "eats anything"
-        }else{
+        if(this.legs === 6){
             return "eats blood"
+        }else if(this.legs === 4){
+            return "carnivore"
+        }else if(this.legs === 2){
+            return "eats most anything"
         }
     }
-    getInventory(...inventory){
-        this.inventory.push(...inventory)
-    }
-
 }
 
-const nancy = new Companion("Nancy", 4, "flea" )
-console.log(nancy)
-console.log(nancy.eat())
-console.log(nancy.move())
-console.log(nancy.getInventory(adventurer.companion.inventory))
+
+class Companion extends Adventurer{
+    constructor(name, type, coins, role, food, legs){
+        super(name, type, coins, role, food)
+        this.legs = legs
+        this.inventory = []
+    }
+    
+}
+
+const robin = new Character("Robin", "human", 100, "adventurer", "potatoes", 2);
+robin.addInventory("sword", "potion", "artifact", "bread", "water");
+robin.roll()
+console.log(robin)
+
+const frank = new Companion("Frank", "Flea", 100, "bloodsucker", "blood", 6);
+frank.addInventory("small hat", "sunglasses", "vial of blood");
+frank.roll()
+console.log(frank)
+
+const leo = new Companion("Leo", "Cat", 100, "feline friend", "lizards", 4);
+frank.addInventory("small hat", "sunglasses", "vial of blood");
+leo.roll()
+console.log(leo)
+
+
+
+// const frank = new Character("Frank", "flea");
+// frank.addInventory("small hat", "sunglasses", "vial of blood");
+// frank.roll()
+// console.log(frank)
+
+
+/**
+ * ! Part 4: Class Uniforms
+**/
