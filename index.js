@@ -44,8 +44,8 @@ class Character {
     constructor(name, type) {
         this.name = name;
         this.type = type
-        if(!this.health === 100){
-            MAX_HEALTH += this.health
+        if(!Character.MAX_HEALTH === 100){
+            this.health -= this.roll()
         }
         this.health = 100;
         this.inventory = [];
@@ -92,7 +92,6 @@ class Adventurer extends Character{
         return `${this.name} is scouting ahead and rolled a(n) ${result}`
     }
     getCoins(){
-        console.log(this.scout())
         return 50 + Math.floor(Math.random() * 20) + 1 
     }
     repairSelf(){
@@ -133,17 +132,14 @@ class Companion extends Adventurer{
 
 const robin = new Adventurer("Robin", "human", 100, "Adventurer", "potatoes", 2, "Leo");
 robin.addInventory("sword", "potion", "artifact", "bread", "water");
-robin.roll()
 console.log(robin)
 
 const frank = new Companion("Frank", "Flea", 100, "Companion", "blood", 6, "None");
 frank.addInventory("small hat", "sunglasses", "vial of blood");
-frank.roll()
 console.log(frank)
 
 const leo = new Companion("Leo", "Cat", 100, "Companion", "lizards", 4, "Frank");
 frank.addInventory("small hat", "sunglasses", "vial of blood");
-leo.roll()
 console.log(leo)
 
 
