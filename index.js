@@ -44,6 +44,9 @@ class Character {
     constructor(name, type) {
         this.name = name;
         this.type = type
+        if(!this.health === 100){
+            MAX_HEALTH += this.health
+        }
         this.health = 100;
         this.inventory = [];
     }
@@ -69,15 +72,20 @@ class Character {
  * ! Part 3: Class Features
 **/
 class Adventurer extends Character{
-    static ROLES = ["Fighter", "Healer", "Wizard"]
-    constructor(name, type, coins, role, food, legs){
+    static ROLES = ["Fighter", "Healer", "Wizard", "Adventurer", "Companion"]
+    constructor(name, type, coins, role, food, legs, companion){
         super(name, type)
         this.food = this.eat()
         this.isAgile = true
         this.strength = 100
         this.inventory.push("bedroll", "50 gold coins")
-        this.role = role
         this.coins = this.getCoins()
+        
+        if(!Adventurer.ROLES.includes(role)){
+            throw new Error("Role is not in the ROLES")
+        }
+        this.role = role
+        this.companion = companion
     }
     scout(){
         let result = super.roll()
@@ -113,29 +121,27 @@ class Adventurer extends Character{
             return "eats most anything"
         }
     }
+   
 }
-
 
 class Companion extends Adventurer{
-    constructor(name, type, coins, role, food, legs){
-        super(name, type, coins, role, food)
-        this.legs = legs
+    constructor(name, type, coins, role, food, legs, companion){
+        super(name, type, coins, role, food, legs, companion)
         this.inventory = []
     }
-    
 }
 
-const robin = new Character("Robin", "human", 100, "adventurer", "potatoes", 2);
+const robin = new Adventurer("Robin", "human", 100, "Adventurer", "potatoes", 2, "Leo");
 robin.addInventory("sword", "potion", "artifact", "bread", "water");
 robin.roll()
 console.log(robin)
 
-const frank = new Companion("Frank", "Flea", 100, "bloodsucker", "blood", 6);
+const frank = new Companion("Frank", "Flea", 100, "Companion", "blood", 6, "None");
 frank.addInventory("small hat", "sunglasses", "vial of blood");
 frank.roll()
 console.log(frank)
 
-const leo = new Companion("Leo", "Cat", 100, "feline friend", "lizards", 4);
+const leo = new Companion("Leo", "Cat", 100, "Companion", "lizards", 4, "Frank");
 frank.addInventory("small hat", "sunglasses", "vial of blood");
 leo.roll()
 console.log(leo)
