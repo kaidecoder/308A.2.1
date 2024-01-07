@@ -40,19 +40,22 @@ const adventurer = {
 **/
 class Character {
     static MAX_HEALTH = 100;
-
+    static FOOD = ["Grass", "Lizard", "blood", "Fish", "Insects", "Toads", "Skin cells", "Hair", "Bone marrow", "Ear wax"]
     constructor(name, type) {
         this.name = name;
         this.type = type
-        if(!Character.MAX_HEALTH === 100){
-            this.health -= this.roll()
+        this.health = Character.MAX_HEALTH;
+        
+        const rollResult = this.roll()
+        this.food = Character.FOOD[rollResult % 10]
+        if(Character.MAX_HEALTH !== 100){
+            this.health -= this.rollResult
         }
-        this.health = 100;
         this.inventory = [];
     }
 
     roll(mod = 0) {
-        const result = Math.floor(Math.random() * 20) + 1 + mod;
+        const result = Math.floor(Math.random() * 20) + mod;
         console.log(`${this.name} rolled a(n) ${result}.`);
         return result
     }
@@ -73,10 +76,10 @@ class Character {
 **/
 class Adventurer extends Character{
     static ROLES = ["Fighter", "Healer", "Wizard", "Adventurer", "Companion"]
-    constructor(name, type, coins, role, food, legs, companion){
+    constructor(name, type, coins, role, legs, companion){
         super(name, type)
-        this.food = this.eat()
         this.isAgile = true
+        this.legs = legs
         this.strength = 100
         this.inventory.push("bedroll", "50 gold coins")
         this.coins = this.getCoins()
@@ -86,10 +89,25 @@ class Adventurer extends Character{
         }
         this.role = role
         this.companion = companion
+        this.scout = this.scout()
+        this.move = this.move()
     }
     scout(){
-        let result = super.roll()
-        return `${this.name} is scouting ahead and rolled a(n) ${result}`
+        let movement = this.move()
+        return `${this.name} is scouting ahead, -${movement}.`
+    }
+    duel(adventurer){
+        while(this.health >= 50){
+            //holds the health values
+            let arr = []
+            let round = []
+            let result = super.roll()
+            arr.push({adventurer: result})
+            //sort the results, subtract one from the lowest
+            arr.sort((a,) => a.this.health - b.this.health)
+            let lowest = arr[0]--
+        }
+        return {arr, lowest}
     }
     getCoins(){
         return 50 + Math.floor(Math.random() * 20) + 1 
@@ -97,27 +115,13 @@ class Adventurer extends Character{
     repairSelf(){
         return this.strength+=5
     }
-    // getRole() {
-    //     const result = Math.floor(Math.random() * this.ROLES.length);
-    //     return this.ROLES[result];
-    // }
-    
     move(){
         if(this.legs === 6){
-            return "runs"
-        }else if(this.legs === 4){
             return "jumps"
-        }else if(this.legs === 2){
-            return "walks"
-        }
-    }
-    eat(){
-        if(this.legs === 6){
-            return "eats blood"
         }else if(this.legs === 4){
-            return "carnivore"
+            return "walks, runs"
         }else if(this.legs === 2){
-            return "eats most anything"
+            return "walks, runs, jumps"
         }
     }
    
@@ -130,21 +134,21 @@ class Companion extends Adventurer{
     }
 }
 
-const robin = new Adventurer("Robin", "human", 100, "Adventurer", "potatoes", 2, "Leo");
+const robin = new Adventurer("Robin", "human", 100, "Adventurer", 2, "Leo");
 robin.addInventory("sword", "potion", "artifact", "bread", "water");
 console.log(robin)
 
-const frank = new Companion("Frank", "Flea", 100, "Companion", "blood", 6, "None");
+const frank = new Companion("Frank", "Flea", 100, "Companion", 6, "None");
 frank.addInventory("small hat", "sunglasses", "vial of blood");
 console.log(frank)
 
-const leo = new Companion("Leo", "Cat", 100, "Companion", "lizards", 4, "Frank");
-frank.addInventory("small hat", "sunglasses", "vial of blood");
+const leo = new Companion("Leo", "Cat", 100, "Companion", 4, "Frank");
 console.log(leo)
 
 
 
-// const frank = new Character("Frank", "flea");
+// frank = new Character("Frank", "flea");
+// console.log(frank.food)
 // frank.addInventory("small hat", "sunglasses", "vial of blood");
 // frank.roll()
 // console.log(frank)
@@ -152,4 +156,31 @@ console.log(leo)
 
 /**
  * ! Part 4: Class Uniforms
+**/
+
+/**
+ * ! Part 5: Gather Your Party
+**/
+class AdventurerFactory {  
+    constructor (role) {
+      this.role = role;
+      this.adventurers = [];
+    }
+    generate (name) {
+      const newAdventurer = new Adventurer(name, this.role);
+      this.adventurers.push(newAdventurer);
+    }
+    findByIndex (index) {
+      return this.adventurers[index];
+    }
+    findByName (name) {
+      return this.adventurers.find((a) => a.name === name);
+    }
+  }
+  
+  const healers = new AdventurerFactory("Healer");
+//   const robin = healers.generate("Robin");
+
+/**
+ * ! Part 6:  Developing Skills
 **/
