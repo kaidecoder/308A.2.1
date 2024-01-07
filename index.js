@@ -63,7 +63,7 @@ class Character {
     }
 
     getLastRollResult() {
-        return this.lastRollResult || 0; // Default to 0 if no roll has been made yet
+        return this.lastRollResult || 0;
     }
 
     // Add items to the inventory
@@ -75,6 +75,8 @@ class Character {
     getInventory() {
         return this.inventory;
     }
+
+    
 }
 
 /**
@@ -99,6 +101,7 @@ class Adventurer extends Character{
         this.move = this.move()
     }
     scout(){
+        //player checks out the terrain
         let movement = this.move()
         return `${this.name} is scouting ahead, -${movement}.`
     }
@@ -116,28 +119,44 @@ class Adventurer extends Character{
             }else{
                 this.health -= 1
             }
-    
+            
+        
             // Log the result of the round
             console.log(`${this.name}'s health: ${this.health}, ${adventurer.name}'s health: ${adventurer.health}\n`);
         }
+        switch(this.role){
+            case "Adventurer":
+                Adventurer.health = this.health
+                break
+            case "Companion":
+                Adventurer.health = adventurer.health
+                break
+            default:
+                break
+        }
+       
     
         // TODO: Determine the winner
         const winner = this.health > adventurer.health ? this : adventurer;
     
-        TODO: return {
+        TODO: return{
             Winner: winner.name,
             "Final Health": { [this.name]: this.health, [adventurer.name]: adventurer.health },
         };
+        
     }
     
     
     getCoins(){
-        return 50 + Math.floor(Math.random() * 20) + 1 
+        //increase player coins
+        return 50 + this.getLastRollResult()
     }
     repairSelf(){
+        //prolong player life
         return this.strength+=5
     }
     move(){
+        //player moves based on number of legs
         if(this.legs === 6){
             return "jumps"
         }else if(this.legs === 4){
