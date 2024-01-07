@@ -49,9 +49,6 @@ class Character {
         
         const rollResult = this.roll()
         this.food = Character.FOOD[rollResult % 10]
-        if(Character.MAX_HEALTH !== 100){
-            this.health -= this.rollResult
-        }
         this.inventory = [];
         this.bodily_functions = Character.BODILY_FUNCTIONS[rollResult % 10]
     }
@@ -99,6 +96,7 @@ class Adventurer extends Character{
         this.companion = companion
         this.scout = this.scout()
         this.move = this.move()
+        // this.winner = this.getWinner()
     }
     scout(){
         //player checks out the terrain
@@ -106,6 +104,7 @@ class Adventurer extends Character{
         return `${this.name} is scouting ahead, -${movement}.`
     }
     duel(adventurer) {
+        let round = 1
         //NOTE:Update the health of the characters also!!!
         while (this.health > 50 && adventurer.health > 50) {
             //TODO:  CANNOT ROLL A ZERO - I needed zero to be able to grab food and roles, not now
@@ -116,37 +115,25 @@ class Adventurer extends Character{
             // Subtract health based on lowest rolls
             if(adventurerRoll > opponentRoll){
                 adventurer.health -= 1
+            }else if(adventurerRoll === opponentRoll){
+                adventurer.health -= 0
             }else{
                 this.health -= 1
             }
-            
-        
+
             // Log the result of the round
-            console.log(`${this.name}'s health: ${this.health}, ${adventurer.name}'s health: ${adventurer.health}\n`);
-        }
-        switch(this.role){
-            case "Adventurer":
-                Adventurer.health = this.health
-                break
-            case "Companion":
-                Adventurer.health = adventurer.health
-                break
-            default:
-                break
+            console.log(`Round ${round} ${this.name}'s health: ${this.health}, ${adventurer.name}'s health: ${adventurer.health}\n`);
+            round++
         }
        
-    
-        // TODO: Determine the winner
-        const winner = this.health > adventurer.health ? this : adventurer;
-    
-        TODO: return{
-            Winner: winner.name,
-            "Final Health": { [this.name]: this.health, [adventurer.name]: adventurer.health },
-        };
+            // Determine a winner
+            if(this.health > adventurer.health){
+                return `${this.name} is the winner with health of ${this.health}`
+            }else{
+                return `${adventurer.name} is the winner with health of ${adventurer.health} `
+            }
         
     }
-    
-    
     getCoins(){
         //increase player coins
         return 50 + this.getLastRollResult()
@@ -187,14 +174,11 @@ console.log(frank)
 const leo = new Companion("Leo", "Cat", 100, "Companion", 4, "Frank");
 console.log(leo)
 
-robin.duel(leo)
+console.log(robin.duel(leo))
 
-// frank = new Character("Frank", "flea");
-// console.log(frank.food)
-// frank.addInventory("small hat", "sunglasses", "vial of blood");
-// frank.roll()
-// console.log(frank)
 
+// const result = robin.getWinner(leo)
+// console.log(result)
 
 /**
  * ! Part 4: Class Uniforms
