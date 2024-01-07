@@ -41,6 +41,7 @@ const adventurer = {
 class Character {
     static MAX_HEALTH = 100;
     static FOOD = ["Grass", "Lizard", "blood", "Fish", "Insects", "Toads", "Skin cells", "Hair", "Bone marrow", "Ear wax"]
+    static BODILY_FUNCTIONS = ["Peeing", "Pooping", "Eating", "Sleeping", "Preying", "Resting", "Grooming", "Sexing", "Farting", "Bathing"]
     constructor(name, type) {
         this.name = name;
         this.type = type
@@ -52,12 +53,17 @@ class Character {
             this.health -= this.rollResult
         }
         this.inventory = [];
+        this.bodily_functions = Character.BODILY_FUNCTIONS[rollResult % 10]
     }
 
     roll(mod = 0) {
-        const result = Math.floor(Math.random() * 20) + mod;
-        console.log(`${this.name} rolled a(n) ${result}.`);
-        return result
+        this.lastRollResult = Math.floor(Math.random() * 20) + mod;
+        console.log(`${this.name} rolled a(n) ${this.lastRollResult}.`);
+        return this.lastRollResult;
+    }
+
+    getLastRollResult() {
+        return this.lastRollResult || 0; // Default to 0 if no roll has been made yet
     }
 
     // Add items to the inventory
@@ -81,7 +87,7 @@ class Adventurer extends Character{
         this.isAgile = true
         this.legs = legs
         this.strength = 100
-        this.inventory.push("bedroll", "50 gold coins")
+        this.inventory.push("bedroll", "50 gold coins", "toilet paper")
         this.coins = this.getCoins()
         
         if(!Adventurer.ROLES.includes(role)){
@@ -96,19 +102,35 @@ class Adventurer extends Character{
         let movement = this.move()
         return `${this.name} is scouting ahead, -${movement}.`
     }
-    duel(adventurer){
-        while(this.health >= 50){
-            //holds the health values
-            let arr = []
-            let round = []
-            let result = super.roll()
-            arr.push({adventurer: result})
-            //sort the results, subtract one from the lowest
-            arr.sort((a,) => a.this.health - b.this.health)
-            let lowest = arr[0]--
+    duel(adventurer) {
+        //NOTE:Update the health of the characters also!!!
+        while (this.health > 50 && adventurer.health > 50) {
+            //TODO:  CANNOT ROLL A ZERO - I needed zero to be able to grab food and roles, not now
+            // Both characters make a roll
+            const adventurerRoll = this.roll();
+            const opponentRoll = adventurer.roll();
+    
+            // Subtract health based on lowest rolls
+            if(adventurerRoll > opponentRoll){
+                adventurer.health -= 1
+            }else{
+                this.health -= 1
+            }
+    
+            // Log the result of the round
+            console.log(`${this.name}'s health: ${this.health}, ${adventurer.name}'s health: ${adventurer.health}\n`);
         }
-        return {arr, lowest}
+    
+        // TODO: Determine the winner
+        const winner = this.health > adventurer.health ? this : adventurer;
+    
+        TODO: return {
+            Winner: winner.name,
+            "Final Health": { [this.name]: this.health, [adventurer.name]: adventurer.health },
+        };
     }
+    
+    
     getCoins(){
         return 50 + Math.floor(Math.random() * 20) + 1 
     }
@@ -138,6 +160,7 @@ const robin = new Adventurer("Robin", "human", 100, "Adventurer", 2, "Leo");
 robin.addInventory("sword", "potion", "artifact", "bread", "water");
 console.log(robin)
 
+
 const frank = new Companion("Frank", "Flea", 100, "Companion", 6, "None");
 frank.addInventory("small hat", "sunglasses", "vial of blood");
 console.log(frank)
@@ -145,7 +168,7 @@ console.log(frank)
 const leo = new Companion("Leo", "Cat", 100, "Companion", 4, "Frank");
 console.log(leo)
 
-
+robin.duel(leo)
 
 // frank = new Character("Frank", "flea");
 // console.log(frank.food)
