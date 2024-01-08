@@ -55,7 +55,7 @@ class Character {
 
     roll(mod = 0) {
         this.lastRollResult = Math.floor(Math.random() * 20) + mod;
-        // console.log(`${this.name} rolled a(n) ${this.lastRollResult}.`);
+        console.log(`${this.name} rolled a(n) ${this.lastRollResult}.`);
         return this.lastRollResult;
     }
 
@@ -72,8 +72,18 @@ class Character {
     getInventory() {
         return this.inventory;
     }
-
+    isPreoccupied() {
+        this.privateFunctions = ["peeing", "Grooming", "Sexing", "Resting", "Pooing"];
     
+        if (this.privateFunctions.includes(this.bodily_functions)) {
+            return `I, ${this.name}, am preoccupied. Let's duel later.`;
+        } else {
+            return `I, ${this.name}, am available for a duel!`;
+        }
+    }
+    
+    
+
 }
 
 /**
@@ -81,7 +91,7 @@ class Character {
 **/
 class Adventurer extends Character{
     static ROLES = ["Fighter", "Healer", "Wizard", "Adventurer", "Companion", "Fairy"]
-    static WISHES = ["Money", "Sleep", "Health", "Land", "House", "Sex change", "Car", "Job"]
+    static WISHES = ["Money", "Sleep", "Health", "Land", "House", "Sex change", "Car", "Job", "Pretty girls", "Bad boys"]
     constructor(name, type, coins, role, legs, companion, wish){
         super(name, type)
         this.isAgile = true
@@ -89,13 +99,12 @@ class Adventurer extends Character{
         this.strength = 100
         this.inventory.push("bedroll", "50 gold coins", "toilet paper")
         this.coins = this.getCoins()
-        // const rollResult = this.roll()
-        // this.wish = Adventurer.WISHES[rollResult % 10]
+        const rollResult = this.roll()
+        this.wish = Adventurer.WISHES[rollResult % 10]
 
         if(!Adventurer.WISHES.includes(wish)){
             throw new Error("Sorry, I can't grant that wish")
         }
-        this.wish = this.wish
 
         if(!Adventurer.ROLES.includes(role)){
             throw new Error("Role is not in the ROLES")
@@ -104,24 +113,38 @@ class Adventurer extends Character{
         this.companion = companion
         this.scout = this.scout()
         this.move = this.move()
+        this.fight = this.isPreoccupied()
+
+        
+        
     }
     scout(){
         //player checks out the terrain
         let movement = this.move()
         return `${this.name} is scouting ahead, -${movement}.`
     }
+    
+    
+
     duel(adventurer) {
         let round = 1
+        if(this.isPreoccupied() || adventurer.isPreoccupied()){
+            return "We can't duel right now"
+        }else{
+            return
+        }
         //NOTE:Update the health of the characters also!!!
         while (this.health > 50 && adventurer.health > 50) {
-            //TODO:  CANNOT ROLL A ZERO - I needed zero to be able to grab food and roles, not now
+            
             // Both characters make a roll
             const adventurerRoll = this.roll();
             const opponentRoll = adventurer.roll();
 
             // Ask losing Character if they want to use a weapon after a certain amount of health left
 
-    
+            
+            
+
             // Subtract health based on lowest rolls
             if(adventurerRoll > opponentRoll){
                 adventurer.health -= 1
@@ -137,18 +160,16 @@ class Adventurer extends Character{
             // Log the result of the round
             console.log(`Round ${round} ${this.name}'s health: ${this.health}, ${adventurer.name}'s health: ${adventurer.health}\n`);
             round++
+            
         }
        
             // Determine a winner
             if(this.health > adventurer.health){
-                // this.MAX_HEALTH = this.health
                 return `${this.name} is the winner with health of ${this.health}`
             }else{
-                // this.MAX_HEALTH = this.health
                 return `${adventurer.name} is the winner with health of ${adventurer.health} `
             }
         
-            //update the health for each player
 
     }
     getCoins(){
@@ -169,9 +190,7 @@ class Adventurer extends Character{
             return "walks, runs, jumps"
         }
     }
-    grantWish(wish){
-
-    }
+    
    
 }
 
@@ -209,8 +228,6 @@ littleMan.addInventory("food")
 tiny.addInventory("food") 
 dee.addInventory("food")
 
-
-
 //The Logs
 console.log(robin)
 console.log(frank)
@@ -225,7 +242,7 @@ console.log(tiny)
 console.log(dee)
 
 //The Duels
-console.log(robin.duel(leo))
+console.log(robin.duel(littleMan))
 
 
 /**
