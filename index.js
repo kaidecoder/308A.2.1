@@ -55,7 +55,7 @@ class Character {
 
     roll(mod = 0) {
         this.lastRollResult = Math.floor(Math.random() * 20) + mod;
-        console.log(`${this.name} rolled a(n) ${this.lastRollResult}.`);
+        // console.log(`${this.name} rolled a(n) ${this.lastRollResult}.`);
         return this.lastRollResult;
     }
 
@@ -80,15 +80,23 @@ class Character {
  * ! Part 3: Class Features
 **/
 class Adventurer extends Character{
-    static ROLES = ["Fighter", "Healer", "Wizard", "Adventurer", "Companion"]
-    constructor(name, type, coins, role, legs, companion){
+    static ROLES = ["Fighter", "Healer", "Wizard", "Adventurer", "Companion", "Fairy"]
+    static WISHES = ["Money", "Sleep", "Health", "Land", "House", "Sex change", "Car", "Job"]
+    constructor(name, type, coins, role, legs, companion, wish){
         super(name, type)
         this.isAgile = true
         this.legs = legs
         this.strength = 100
         this.inventory.push("bedroll", "50 gold coins", "toilet paper")
         this.coins = this.getCoins()
-        
+        // const rollResult = this.roll()
+        // this.wish = Adventurer.WISHES[rollResult % 10]
+
+        if(!Adventurer.WISHES.includes(wish)){
+            throw new Error("Sorry, I can't grant that wish")
+        }
+        this.wish = this.wish
+
         if(!Adventurer.ROLES.includes(role)){
             throw new Error("Role is not in the ROLES")
         }
@@ -96,7 +104,6 @@ class Adventurer extends Character{
         this.companion = companion
         this.scout = this.scout()
         this.move = this.move()
-        // this.winner = this.getWinner()
     }
     scout(){
         //player checks out the terrain
@@ -111,6 +118,9 @@ class Adventurer extends Character{
             // Both characters make a roll
             const adventurerRoll = this.roll();
             const opponentRoll = adventurer.roll();
+
+            // Ask losing Character if they want to use a weapon after a certain amount of health left
+
     
             // Subtract health based on lowest rolls
             if(adventurerRoll > opponentRoll){
@@ -121,6 +131,9 @@ class Adventurer extends Character{
                 this.health -= 1
             }
 
+            // Subtract health based on weapon used
+
+
             // Log the result of the round
             console.log(`Round ${round} ${this.name}'s health: ${this.health}, ${adventurer.name}'s health: ${adventurer.health}\n`);
             round++
@@ -128,11 +141,15 @@ class Adventurer extends Character{
        
             // Determine a winner
             if(this.health > adventurer.health){
+                // this.MAX_HEALTH = this.health
                 return `${this.name} is the winner with health of ${this.health}`
             }else{
+                // this.MAX_HEALTH = this.health
                 return `${adventurer.name} is the winner with health of ${adventurer.health} `
             }
         
+            //update the health for each player
+
     }
     getCoins(){
         //increase player coins
@@ -152,6 +169,9 @@ class Adventurer extends Character{
             return "walks, runs, jumps"
         }
     }
+    grantWish(wish){
+
+    }
    
 }
 
@@ -162,23 +182,51 @@ class Companion extends Adventurer{
     }
 }
 
-const robin = new Adventurer("Robin", "human", 100, "Adventurer", 2, "Leo");
+//The Adventurers
+const robin = new Adventurer("Robin", "Human", 100, "Adventurer", 2, "Leo", "Land");
+const mathilda = new Adventurer("Mathilda", "Fantastical Creature", 5000, "Fairy", 2, "Summer", "Sex change");
+const manman = new Adventurer("Manman", "Human", 5000, "Fighter", 2, "Little Man", "Money");
+const wiseman = new Adventurer("Wiseman", "Human", 5000, "Healer", 2, "Tiny", "Sleep");
+const lilTommy = new Adventurer("LilTommy", "Human", 5000, "Wizard", 2, "Dee", "Health");
+
+//The Companions
+const frank = new Companion("Frank", "Flea", 100, "Companion", 6, "None", "Health");
+const leo = new Companion("Leo", "Cat", 100, "Companion", 4, "Frank", "House");
+const summer = new Companion("Summer", "Bird", 100, "Companion", 4, "None", "Health");
+const littleMan = new Companion("Little Man", "Human", 100, "Companion", 4, "None", "Car");
+const tiny = new Companion("Tiny", "Salamander", 100, "Companion", 4, "None", "Land");
+const dee = new Companion("Dee", "Raven", 100, "Companion", 4, "None", "House");
+
+//The Inventory
 robin.addInventory("sword", "potion", "artifact", "bread", "water");
-console.log(robin)
-
-
-const frank = new Companion("Frank", "Flea", 100, "Companion", 6, "None");
+mathilda.addInventory("plants", "springtime")
+manman.addInventory("sword", "gun", "bullets", "chinese stars", "knife", "matches")
+wiseman.addInventory("stories", "humor", "music", "marijuana", "ceremonies" )
+lilTommy.addInventory("potions", "voodoo", "hoodoo", "skull", "bones", "chicken")
 frank.addInventory("small hat", "sunglasses", "vial of blood");
+summer.addInventory("food")
+littleMan.addInventory("food")
+tiny.addInventory("food") 
+dee.addInventory("food")
+
+
+
+//The Logs
+console.log(robin)
 console.log(frank)
-
-const leo = new Companion("Leo", "Cat", 100, "Companion", 4, "Frank");
 console.log(leo)
+console.log(mathilda)
+console.log(manman)
+console.log(wiseman)
+console.log(lilTommy)
+console.log(summer)
+console.log(littleMan)
+console.log(tiny)
+console.log(dee)
 
+//The Duels
 console.log(robin.duel(leo))
 
-
-// const result = robin.getWinner(leo)
-// console.log(result)
 
 /**
  * ! Part 4: Class Uniforms
