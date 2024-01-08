@@ -73,13 +73,9 @@ class Character {
         return this.inventory;
     }
     isPreoccupied() {
-        this.privateFunctions = ["peeing", "Grooming", "Sexing", "Resting", "Pooing"];
+        const privateFunctions = ["Peeing", "Grooming", "Sexing", "Resting", "Pooing"];
     
-        if (this.privateFunctions.includes(this.bodily_functions)) {
-            return `I, ${this.name}, am preoccupied. Let's duel later.`;
-        } else {
-            return `I, ${this.name}, am available for a duel!`;
-        }
+        return privateFunctions.includes(this.bodily_functions)
     }
     
     
@@ -128,12 +124,13 @@ class Adventurer extends Character{
 
     duel(adventurer) {
         let round = 1
+
+        // If a character is peeing, grooming, sexing, resting, or pooing, then they are occupied and can't fight
         if(this.isPreoccupied() || adventurer.isPreoccupied()){
-            return "We can't duel right now"
+            return "We can't duel right now, we are occupied."
         }else{
-            return
-        }
-        //NOTE:Update the health of the characters also!!!
+            
+        //TODO:Update the health of the characters also!!!
         while (this.health > 50 && adventurer.health > 50) {
             
             // Both characters make a roll
@@ -170,7 +167,7 @@ class Adventurer extends Character{
                 return `${adventurer.name} is the winner with health of ${adventurer.health} `
             }
         
-
+        }
     }
     getCoins(){
         //increase player coins
