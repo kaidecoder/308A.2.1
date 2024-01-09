@@ -1,0 +1,4 @@
+.prettierignore
+.prettierrc
+node_modules
+.practice.js
